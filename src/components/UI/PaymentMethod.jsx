@@ -34,6 +34,13 @@ const PaymentMethod = () => {
 
         <img src={paypal} alt="" />
       </div>
+      <div className="payment mt-3 d-flex align-items-center justify-content-between">
+        <label htmlFor="" className="d-flex align-items-center gap-2">
+          <input type="radio" /> Mpesa
+        </label>
+
+
+      </div>
       <div className="payment text-end mt-5">
         <button>Reserve Now</button>
       </div>
