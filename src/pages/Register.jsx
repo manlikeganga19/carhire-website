@@ -8,7 +8,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = () => {
-    // Implement your register logic here
+    // Implement register logic here
     console.log('Name:', name);
     console.log('Username:', username);
     console.log('Email:', email);
