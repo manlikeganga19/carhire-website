@@ -7,8 +7,8 @@ const blogData = [
   {
     id: 1,
     title: "The best way to drive cars",
-    author: "Muhib",
-    date: "12 Dec, 2020",
+    author: "Daniel",
+    date: "12 Dec, 2023",
     time: "9pm",
     imgUrl: img01,
     description:
@@ -20,8 +20,8 @@ const blogData = [
   {
     id: 2,
     title: "If your car battery is down",
-    author: "Muhib",
-    date: "12 Dec, 2020",
+    author: "Daniel",
+    date: "12 Dec, 2023",
     time: "9pm",
     imgUrl: img02,
     description:
@@ -33,8 +33,8 @@ const blogData = [
   {
     id: 3,
     title: "The best way to give trip",
-    author: "Muhib",
-    date: "12 Dec, 2020",
+    author: "Daniel",
+    date: "12 Dec, 2023",
     time: "9pm",
     imgUrl: img03,
     description:
