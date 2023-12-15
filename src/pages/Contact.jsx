@@ -40,6 +40,11 @@ const Contact = () => {
 
     // Displaying a success toast
     toast.success("Contact information sent successfully!");
+    
+    // clearing the form after the contact informaton is sent
+    setName('');
+    setEmail('');
+    setMessage('');
   };
   return (
     <Helmet title="Contact">
