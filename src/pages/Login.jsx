@@ -67,13 +67,13 @@ const styles = {
     marginBottom: '8px',
   },
   input: {
-    padding: '8px',
-    marginBottom: '16px',
+    padding: '4px',
+    marginBottom: '12px',
     width: '100%',
     boxSizing: 'border-box',
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#000d6b ',
     color: 'white',
     padding: '10px 15px',
     borderRadius: '5px',
