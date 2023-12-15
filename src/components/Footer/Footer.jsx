@@ -43,7 +43,7 @@ const Footer = () => {
                 <Link to="/home" className=" d-flex align-items-center gap-2">
                   <i class="ri-car-line"></i>
                   <span>
-                    Rent excavator <br /> Service
+                    Rent Car <br /> Service
                   </span>
                 </Link>
               </h1>
@@ -72,7 +72,7 @@ const Footer = () => {
           <Col lg="3" md="4" sm="6">
             <div className="mb-4">
               <h5 className="footer__link-title mb-4">Head Office</h5>
-              <p className="office__info">Bamburi, ,Mombasa, Kenya</p>
+              <p className="office__info">Mombasa, Kenya</p>
               <p className="office__info">Phone: +254797233957</p>
 
               <p className="office__info">Email: orwenjodaniel19@gmail.com</p>
