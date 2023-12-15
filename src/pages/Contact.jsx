@@ -39,7 +39,9 @@ const Contact = () => {
     // My logic to handle the form submission, e.g., sending data to the server
 
     // Displaying a success toast
-    toast.success("Contact information sent successfully!");
+    toast.success("Contact information sent successfully!", {
+      position: toast.POSITION.TOP_CENTER
+    });
     
     // clearing the form after the contact informaton is sent
     setName('');
@@ -114,6 +116,7 @@ const Contact = () => {
           </Row>
         </Container>
       </section>
+      <ToastContainer/>
     </Helmet>
   );
 };
