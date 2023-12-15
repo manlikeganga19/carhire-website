@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Container, Row, Col, ListGroup, ListGroupItem } from "reactstrap";
 import { Link } from "react-router-dom";
 import "../../styles/footer.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const quickLinks = [
   {
@@ -33,6 +35,25 @@ const quickLinks = [
 const Footer = () => {
   const date = new Date();
   const year = date.getFullYear();
+  const [email, setEmail] = useState('');
+
+  const notifySuccess = () => toast.success("Email Sent Successfully", {
+    position: toast.POSITION.TOP_CENTER
+  });
+  const notifyError = () => toast.warning("Please, Enter your Email", {
+    position: toast.POSITION.TOP_CENTER
+  });
+
+  const handleButtonClick = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (emailRegex.test(email)) {
+      notifySuccess();
+    } else {
+      notifyError();
+    }
+  };
+
   return (
     <footer className="footer">
       <Container>
@@ -86,8 +107,10 @@ const Footer = () => {
               <h5 className="footer__link-title">Newsletter</h5>
               <p className="section__description">Subscribe our newsletter</p>
               <div className="newsletter">
-                <input type="email" placeholder="Email" />
-                <span>
+                <input type="email" placeholder="Email" value={email}
+                  onChange={(e) => setEmail(e.target.value)} />
+                <span className="send" onClick={handleButtonClick}>
+
                   <i class="ri-send-plane-line"></i>
                 </span>
               </div>
@@ -104,6 +127,8 @@ const Footer = () => {
           </Col>
         </Row>
       </Container>
+      <ToastContainer />
+
     </footer>
   );
 };
