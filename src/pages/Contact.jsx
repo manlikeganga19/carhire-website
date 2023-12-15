@@ -1,8 +1,10 @@
-import React from "react";
+import React,{useState} from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Form, FormGroup, Input } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/CommonSection";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "../styles/contact.css";
 
@@ -26,6 +28,19 @@ const socialLinks = [
 ];
 
 const Contact = () => {
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+
+   const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    // My logic to handle the form submission, e.g., sending data to the server
+
+    // Displaying a success toast
+    toast.success("Contact information sent successfully!");
+  };
   return (
     <Helmet title="Contact">
       <CommonSection title="Contact" />
@@ -35,18 +50,22 @@ const Contact = () => {
             <Col lg="7" md="7">
               <h6 className="fw-bold mb-4">Get In Touch</h6>
 
-              <Form>
+              <Form onSubmit={handleFormSubmit}>
                 <FormGroup className="contact__form">
-                  <Input placeholder="Your Name" type="text" />
+                  <Input placeholder="Your Name" type="text" value={name}
+                    onChange={(e) => setName(e.target.value)}/>
                 </FormGroup>
                 <FormGroup className="contact__form">
-                  <Input placeholder="Email" type="email" />
+                  <Input placeholder="Email" type="email" value={email}
+                    onChange={(e) => setEmail(e.target.value)}/>
                 </FormGroup>
                 <FormGroup className="contact__form">
                   <textarea
                     rows="5"
                     placeholder="Message"
                     className="textarea"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                   ></textarea>
                 </FormGroup>
 
