@@ -15,7 +15,6 @@ users = {
     'user2': {'password': 'password2'}
 }
 
-
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
