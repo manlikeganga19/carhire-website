@@ -8,7 +8,7 @@ import ava03 from "../../assets/all-images/ava-3.jpg";
 
 const OUR__MEMBERS = [
   {
-    name: "Jhon Doe",
+    name: "vic mulei",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",
@@ -18,7 +18,7 @@ const OUR__MEMBERS = [
   },
 
   {
-    name: "David Lisa",
+    name: "Lisa",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",
@@ -28,7 +28,7 @@ const OUR__MEMBERS = [
   },
 
   {
-    name: "Hilton King",
+    name: "Big liam",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",
@@ -38,7 +38,7 @@ const OUR__MEMBERS = [
   },
 
   {
-    name: "Jhon Doe",
+    name: "Daniel Orwenjo",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",
