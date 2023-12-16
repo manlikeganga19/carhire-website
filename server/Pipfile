@@ -7,6 +7,10 @@ name = "pypi"
 flask-session = "*"
 flask = "*"
 werkzeug = "*"
+sqlalchemy = "*"
+psycopg2 = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
 
 [dev-packages]
 

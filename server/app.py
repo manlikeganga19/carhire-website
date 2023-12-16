@@ -1,18 +1,19 @@
+# app.py
+
 from flask import Flask, request, jsonify, session
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_migrate import Migrate
 from config import Config
+from models import db, User
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
+migrate = Migrate(app, db)
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-users = {
-    'user1': {'password': 'password1'},
-    'user2': {'password': 'password2'}
-}
+db.init_app(app)
 
 
 @app.route('/login', methods=['POST'])
@@ -22,9 +23,9 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    # In a production environment, you would query the database for user information
-    # Here, we're using a simple in-memory dictionary
-    if username in users and users[username]['password'] == password:
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password, password):
         # Set the user in the session
         session['username'] = username
         return jsonify({'message': 'Login successful'}), 200
@@ -32,7 +33,7 @@ def login():
         return jsonify({'message': 'Invalid credentials'}), 401
 
 
-@app.route('/sign-in', methods=['POST'])
+@app.route('/logout', methods=['POST'])
 def logout():
     # Remove the user from the session
     session.pop('username', None)
@@ -47,23 +48,6 @@ def protected():
     else:
         return jsonify({'message': 'Unauthorized'}), 401
 
-# New registration route
-
-
-@app.route('/sign-up', methods=['POST'])
-def register():
-    data = request.get_json()
-    
-    username = data.get('username')
-    password = data.get('password')
-
-    # In a production environment, you would validate and store user information
-    # Here, we're just adding the user to the in-memory dictionary for simplicity
-    users[username] = {'password': password}
-
-    return jsonify({'message': 'Registration successful'}), 200
-
 
 if __name__ == '__main__':
-
     app.run(debug=True, port=5555)
