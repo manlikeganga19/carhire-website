@@ -1,11 +1,10 @@
-from flask import Flask, request, jsonify, session, redirect, url_for
+from flask import Flask, request, jsonify, session
 from flask_session import Session
+from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
 
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
@@ -14,6 +13,7 @@ users = {
     'user1': {'password': 'password1'},
     'user2': {'password': 'password2'}
 }
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -32,7 +32,7 @@ def login():
         return jsonify({'message': 'Invalid credentials'}), 401
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/sign-in', methods=['POST'])
 def logout():
     # Remove the user from the session
     session.pop('username', None)
@@ -47,8 +47,23 @@ def protected():
     else:
         return jsonify({'message': 'Unauthorized'}), 401
 
+# New registration route
+
+
+@app.route('/sign-up', methods=['POST'])
+def register():
+    data = request.get_json()
+    
+    username = data.get('username')
+    password = data.get('password')
+
+    # In a production environment, you would validate and store user information
+    # Here, we're just adding the user to the in-memory dictionary for simplicity
+    users[username] = {'password': password}
+
+    return jsonify({'message': 'Registration successful'}), 200
+
 
 if __name__ == '__main__':
-    # Change this to a secure secret key in a production environment
-    app.secret_key = 'super_secret_key'
+
     app.run(debug=True, port=5555)
