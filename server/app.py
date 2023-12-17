@@ -15,6 +15,32 @@ Session(app)
 
 db.init_app(app)
 
+# Registration route
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    name = data.get('name')
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Check if the username or email already exists
+    if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Username or email already exists'}), 400
+
+    # Create a new user
+    new_user = User(name=name, username=username, email=email)
+    new_user.set_password(password)
+
+    # Add the user to the database
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'Registration successful'}), 201
+
 
 @app.route('/login', methods=['POST'])
 def login():
