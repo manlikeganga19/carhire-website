@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { useAuth } from '../components/Auth/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -6,15 +11,39 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleRegister = () => {
-    // Implement register logic here
-    console.log('Name:', name);
-    console.log('Username:', username);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
+  const handleRegister = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5555/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Account created successfully');
+
+        login(data.user);
+
+        setTimeout(() => {
+          navigate('/sign-in'); 
+        }, 1000); 
+      } else {
+        toast.error(`Registration failed: ${data.message}`);
+        console.error('Registration failed:', data.message);
+      }
+    } catch (error) {
+      toast.error('Error during registration. Please try again.');
+      console.error('Error during registration:', error);
+    }
   };
+
 
   const styles = {
     container: {
@@ -115,6 +144,7 @@ const Register = () => {
           Already have an account? <a href="/sign-in">Login</a>
         </p>
       </form>
+      <ToastContainer/>
     </div>
   );
 };

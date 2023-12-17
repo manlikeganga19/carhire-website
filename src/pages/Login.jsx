@@ -1,14 +1,46 @@
 import React, { useState } from 'react';
+import { useAuth } from '../components/Auth/AuthContext';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
 
-    console.log('Username:', username);
-    console.log('Password:', password);
+    try {
+      const response = await fetch('http://127.0.0.1:5555/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Login successful');
+
+        login(data.user);
+
+        setTimeout(() => {
+          navigate('/');
+        }, 1000); 
+      } else {
+        toast.error(`Login failed: ${data.message}`);
+        console.error('Login failed:', data.message);
+      }
+    } catch (error) {
+      toast.error('Error during login. Please try again.');
+      console.error('Error during login:', error);
+    }
   };
+
+  
 
   return (
     <div style={styles.container}>
@@ -39,7 +71,6 @@ const Login = () => {
           Don't have an account? <a href="/sign-up">Register</a>
         </p>
       </form>
-
     </div>
   );
 };

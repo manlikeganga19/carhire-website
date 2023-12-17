@@ -6,8 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from config import Config
 from models import db, User
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(Config)
 migrate = Migrate(app, db)
 app.config['SESSION_TYPE'] = 'filesystem'
