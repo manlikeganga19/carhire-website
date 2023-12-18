@@ -1,37 +1,37 @@
-import React, { useRef } from "react";
-import { Container, Row, Col } from "reactstrap";
-import { Link, NavLink } from "react-router-dom";
-import "../../styles/header.css";
+import React, { useRef } from "react"; 
+import { Container, Row, Col } from "reactstrap"; 
+import { Link, NavLink } from "react-router-dom"; 
+import "../../styles/header.css"; 
 
 const navLinks = [
-  {
-    path: "/home",
-    display: "Home",
-  },
-  {
-    path: "/about",
-    display: "About",
-  },
-  {
-    path: "/cars",
-    display: "Cars",
-  },
+  { 
+    path: "/home", 
+    display: "Home", 
+  }, 
+  { 
+    path: "/about", 
+    display: "About",   
+  }, 
+  { 
+    path: "/cars", 
+    display: "Cars",  
+  }, 
+ 
+  { 
+    path: "/blogs",  
+    display: "Blog", 
+  }, 
+  { 
+    path: "/contact", 
+    display: "Contact", 
+  }, 
+  { 
+    path: "/sign-in", 
+    display: "Sign In", 
+  }, 
+]; 
 
-  {
-    path: "/blogs",
-    display: "Blog",
-  },
-  {
-    path: "/contact",
-    display: "Contact",
-  },
-  {
-    path: "/sign-in",
-    display: "Sign In",
-  },
-];
-
-const Header = () => {
+const Header = () => { 
   const menuRef = useRef(null);
   const toggleMenu = () => menuRef.current.classList.toggle('menu__active');
 
