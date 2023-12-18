@@ -1,6 +1,4 @@
-# app.py
-
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, make_response
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
@@ -9,7 +7,7 @@ from models import db, User
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins="http://localhost:3000/")
 app.config.from_object(Config)
 migrate = Migrate(app, db)
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -43,11 +41,18 @@ def register():
 
     return jsonify({'message': 'Registration successful'}), 201
 
+@app.route('/login', methods=['OPTIONS', 'POST'])
+def handle_options_login():
+    response = make_response()
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'POST')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-
     username = data.get('username')
     password = data.get('password')
 
@@ -56,25 +61,47 @@ def login():
     if user and check_password_hash(user.password, password):
         # Set the user in the session
         session['username'] = username
-        return jsonify({'message': 'Login successful'}), 200
+        response = jsonify({'message': 'Login successful'})
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+
+        return response, 200
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+        response = jsonify({'message': 'Invalid credentials'})
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+
+        return response, 401
 
 
 @app.route('/logout', methods=['POST'])
 def logout():
     # Remove the user from the session
     session.pop('username', None)
-    return jsonify({'message': 'Logout successful'}), 200
+
+    # Create a response and add CORS headers
+    response = jsonify({'message': 'Logout successful'})
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+
+    return response, 200
+
 
 
 @app.route('/protected', methods=['GET'])
 def protected():
     # Check if the user is logged in
     if 'username' in session:
-        return jsonify({'message': f'Hello, {session["username"]}! This is a protected resource.'}), 200
+        response = jsonify(
+            {'message': f'Hello, {session["username"]}! This is a protected resource.'})
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+
+        return response, 200
     else:
-        return jsonify({'message': 'Unauthorized'}), 401
+        response = jsonify({'message': 'Unauthorized'})
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response, 401
 
 
 if __name__ == '__main__':
