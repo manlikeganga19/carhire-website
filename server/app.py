@@ -7,7 +7,7 @@ from models import db, User
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins="http://localhost:3000/")
+CORS(app, supports_credentials=True, origins="http://localhost:3000")
 app.config.from_object(Config)
 migrate = Migrate(app, db)
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -41,14 +41,6 @@ def register():
 
     return jsonify({'message': 'Registration successful'}), 201
 
-@app.route('/login', methods=['OPTIONS', 'POST'])
-def handle_options_login():
-    response = make_response()
-    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Methods', 'POST')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -62,17 +54,10 @@ def login():
         # Set the user in the session
         session['username'] = username
         response = jsonify({'message': 'Login successful'})
-        response.headers.add('Access-Control-Allow-Credentials', 'true')
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-
         return response, 200
     else:
         response = jsonify({'message': 'Invalid credentials'})
-        response.headers.add('Access-Control-Allow-Credentials', 'true')
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-
-        return response, 401
-
+        return response, 403
 
 @app.route('/logout', methods=['POST'])
 def logout():

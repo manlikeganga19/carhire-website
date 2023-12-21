@@ -33,7 +33,7 @@ const Register = () => {
 
         setTimeout(() => {
           navigate('/sign-in'); 
-        }, 1000); 
+        }, 5000); 
       } else {
         toast.error(`Registration failed: ${data.message}`);
         console.error('Registration failed:', data.message);

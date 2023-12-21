@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/Auth/AuthContext';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const Login = () => {
   const { login } = useAuth();
@@ -10,7 +13,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-
     try {
       const response = await fetch('http://127.0.0.1:5555/login', {
         method: 'POST',
@@ -20,19 +22,36 @@ const Login = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        toast.error(`Login failed: ${errorMessage}`);
+        console.error('Login failed:', errorMessage);
+        return;
+      }
 
-      if (response.ok) {
-        toast.success('Login successful');
+      const responseBody = await response.text();
+      // console.log('Response Body:', responseBody); 
 
-        login(data.user);
+      try {
+        const data = JSON.parse(responseBody);
 
-        setTimeout(() => {
-          navigate('/');
-        }, 1000); 
-      } else {
-        toast.error(`Login failed: ${data.message}`);
-        console.error('Login failed:', data.message);
+        // Check if the JSON structure is as expected
+        if (data && data.message === 'Login successful') {
+          toast.success('Login successful');
+
+          // Since there is no 'user' property, adjust the login function accordingly
+          login();
+
+          setTimeout(() => {
+            navigate('/');
+          }, 1000);
+        } else {
+          toast.error('Invalid response from server');
+          console.error('Invalid response:', data);
+        }
+      } catch (jsonError) {
+        toast.error('Error parsing JSON from server');
+        console.error('JSON parsing error:', jsonError);
       }
     } catch (error) {
       toast.error('Error during login. Please try again.');
@@ -40,7 +59,10 @@ const Login = () => {
     }
   };
 
-  
+
+
+
+
 
   return (
     <div style={styles.container}>
@@ -71,6 +93,8 @@ const Login = () => {
           Don't have an account? <a href="/sign-up">Register</a>
         </p>
       </form>
+      <ToastContainer />
+
     </div>
   );
 };
