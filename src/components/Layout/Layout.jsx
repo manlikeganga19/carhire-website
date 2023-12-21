@@ -9,7 +9,6 @@ const Layout = () => {
   const location = useLocation();
   const { pathname } = location;
 
-  // Paths where you want to hide the header and footer
   const excludePaths = ["/sign-in", "/sign-up"];
 
   // Check if the current path is in the excludePaths array
