@@ -3,7 +3,7 @@ from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from config import Config
-from models import db, User
+from models import db, User, Comment, Newsletter, Contact
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -59,6 +59,7 @@ def login():
         response = jsonify({'message': 'Invalid credentials'})
         return response, 403
 
+
 @app.route('/logout', methods=['POST'])
 def logout():
     # Remove the user from the session
@@ -67,10 +68,10 @@ def logout():
     # Create a response and add CORS headers
     response = jsonify({'message': 'Logout successful'})
     response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Origin',
+                         'http://localhost:3000')
 
     return response, 200
-
 
 
 @app.route('/protected', methods=['GET'])
@@ -80,13 +81,80 @@ def protected():
         response = jsonify(
             {'message': f'Hello, {session["username"]}! This is a protected resource.'})
         response.headers.add('Access-Control-Allow-Credentials', 'true')
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Origin',
+                             'http://localhost:3000')
 
         return response, 200
     else:
         response = jsonify({'message': 'Unauthorized'})
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response, 401
+
+
+@app.route('/contact', methods=['POST'])
+def add_contact():
+    data = request.get_json()
+    new_contact = Contact(
+        name=data['name'], email=data['email'], message=data['message'])
+    db.session.add(new_contact)
+    db.session.commit()
+    return jsonify({'message': 'Contact added successfully'}), 201
+
+# Routes for Newsletter Model
+
+
+@app.route('/newsletter', methods=['POST'])
+def add_newsletter():
+    data = request.get_json()
+    new_email = Newsletter(email=data['email'])
+    db.session.add(new_email)
+    db.session.commit()
+    return jsonify({'message': 'Email added to newsletter successfully'}), 201
+
+# Routes for Comment Model
+
+
+@app.route('/comments', methods=['POST'])
+def add_comment():
+    data = request.get_json()
+    new_comment = Comment(
+        name=data['name'], email=data['email'], comment=data['comment'])
+    db.session.add(new_comment)
+    db.session.commit()
+    return jsonify({'message': 'Comment added successfully'}), 201
+
+
+@app.route('/comments', methods=['GET'])
+def get_comments():
+    comments = Comment.query.all()
+    comment_list = []
+    for comment in comments:
+        comment_list.append({
+            'name': comment.name,
+            'email': comment.email,
+            'comment': comment.comment
+        })
+    return jsonify({'comments': comment_list})
+
+
+@app.route('/bookings', methods=['POST'])
+def add_booking():
+    data = request.get_json()
+    new_booking = Booking(
+        name=data['name'],
+        email=data['email'],
+        phone_number=data['phone_number'],
+        from_address=data['from_address'],
+        to_address=data['to_address'],
+        persons_to_carry=data['persons_to_carry'],
+        luggage_to_carry=data.get('luggage_to_carry'),
+        date=data['date'],
+        time=data['time'],
+        additional_text=data.get('additional_text')
+    )
+    db.session.add(new_booking)
+    db.session.commit()
+    return jsonify({'message': 'Booking information added successfully'}), 201
 
 
 if __name__ == '__main__':
