@@ -27,7 +27,7 @@ const BlogDetails = () => {
 
     if (!auth.isLoggedIn) {
       // Redirect to the login page if the user is not logged in
-      history.push("/login");
+      history.push("/sign-in");
       return;
     }
 
