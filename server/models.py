@@ -53,7 +53,7 @@ class Booking(db.Model):
     from_address = db.Column(db.String(255), nullable=False)
     to_address = db.Column(db.String(255), nullable=False)
     persons_to_carry = db.Column(db.Integer, nullable=False)
-    luggage_to_carry = db.Column(db.String(255), nullable=True)
+    luggage_to_carry = db.Column(db.Integer, nullable=True)
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
     additional_text = db.Column(db.Text, nullable=True)

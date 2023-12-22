@@ -3,8 +3,10 @@ from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from config import Config
-from models import db, User, Comment, Newsletter, Contact
+from models import db, User, Comment, Newsletter, Contact, Booking
 from flask_cors import CORS
+from datetime import datetime
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="http://localhost:3000")
@@ -140,16 +142,31 @@ def get_comments():
 @app.route('/bookings', methods=['POST'])
 def add_booking():
     data = request.get_json()
+
+    # Validate that persons_to_carry is not less than 1
+    persons_to_carry = data.get('persons_to_carry')
+    if persons_to_carry is None or persons_to_carry < 1:
+        return jsonify({'error': 'Invalid value for persons_to_carry'}), 400
+
+    # Convert date and time strings to Python date and time objects
+    date_str = data.get('date')
+    time_str = data.get('time')
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        time_obj = datetime.strptime(time_str, '%H:%M:%S').time()
+    except ValueError:
+        return jsonify({'error': 'Invalid date or time format'}), 400
+
     new_booking = Booking(
         name=data['name'],
         email=data['email'],
         phone_number=data['phone_number'],
         from_address=data['from_address'],
         to_address=data['to_address'],
-        persons_to_carry=data['persons_to_carry'],
+        persons_to_carry=persons_to_carry,
         luggage_to_carry=data.get('luggage_to_carry'),
-        date=data['date'],
-        time=data['time'],
+        date=date,
+        time=time_obj,  # Use the Python time object
         additional_text=data.get('additional_text')
     )
     db.session.add(new_booking)
