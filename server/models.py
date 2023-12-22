@@ -20,17 +20,22 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
 
-class contact(db.Model):
+class Contact(db.Model):
+    __tablename__ = 'contacts'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     message = db.Column(db.Text, nullable=False)
 
 class Newsletter(db.Model):
+    __tablename__ = 'newsletters'
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
 
 class Comment(db.Model):
+    __tablename__ = 'comments'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
