@@ -172,11 +172,10 @@ def get_any_comment():
 
 @app.route('/bookings', methods=['POST'])
 def add_booking():
-    data = request.get_json()
+    data = request.form
 
-    # Validate that persons_to_carry is not less than 1
     persons_to_carry = data.get('persons_to_carry')
-    if persons_to_carry is None or persons_to_carry < 1:
+    if persons_to_carry is None or int(persons_to_carry) < 1:
         return jsonify({'error': 'Invalid value for persons_to_carry'}), 400
 
     # Convert date and time strings to Python date and time objects
@@ -184,9 +183,10 @@ def add_booking():
     time_str = data.get('time')
     try:
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        time_obj = datetime.strptime(time_str, '%H:%M:%S').time()
-    except ValueError:
-        return jsonify({'error': 'Invalid date or time format'}), 400
+        time_obj = datetime.strptime(time_str, '%I:%M %p').time()
+    except ValueError as e:
+        app.logger.error(f"Error parsing date or time: {e}")
+        return jsonify({'error': f'Invalid date or time format: {e}'}), 400
 
     new_booking = Booking(
         name=data['name'],
@@ -197,7 +197,7 @@ def add_booking():
         persons_to_carry=persons_to_carry,
         luggage_to_carry=data.get('luggage_to_carry'),
         date=date,
-        time=time_obj,  # Use the Python time object
+        time=time_obj,  
         additional_text=data.get('additional_text')
     )
     db.session.add(new_booking)
