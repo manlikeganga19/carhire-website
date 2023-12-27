@@ -6,7 +6,8 @@ from config import Config
 from models import db, User, Comment, Newsletter, Contact, Booking
 from flask_cors import CORS
 from datetime import datetime
-
+import random
+from sqlalchemy import func
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins="http://localhost:3000")
@@ -150,6 +151,24 @@ def get_all_comments():
         comment_list.append(comment_dict)
 
     return jsonify(comment_list)
+
+
+def get_any_comment():
+    # Fetch any comment (randomly)
+    any_comment = Comment.query.order_by(func.random()).first()
+
+    if any_comment:
+        comment_data = {
+            'id': any_comment.id,
+            'name': any_comment.name,
+            'email': any_comment.email,
+            'comment': any_comment.comment,
+            'date': any_comment.date.strftime('%Y-%m-%d %H:%M:%S') if any_comment.date else None
+        }
+        return jsonify(comment_data)
+    else:
+        return jsonify({'message': 'No comments available'}), 404
+
 
 @app.route('/bookings', methods=['POST'])
 def add_booking():

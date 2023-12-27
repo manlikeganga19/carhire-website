@@ -7,22 +7,23 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import commentImg from "../assets/all-images/ava-1.jpg";
+import axios from 'axios';
 import "../styles/blog-details.css";
-import axios from 'axios'
 
 const BlogDetails = () => {
   const { slug } = useParams();
   const blog = blogData.find((blog) => blog.title === slug);
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
-
+  const [randomComment, setRandomComment] = useState(null);
+  const [showAllComments, setShowAllComments] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchComments();
-
+    fetchRandomComment();
   }, [blog]);
 
   const fetchComments = async () => {
@@ -35,6 +36,18 @@ const BlogDetails = () => {
       console.error('Error fetching comments:', error);
     }
   };
+
+  const fetchRandomComment = async () => {
+    try {
+      // Make a request to get a random comment
+      const response = await axios.get('http://127.0.0.1:5555/random-comment');
+      // Update the randomComment state with the fetched comment
+      setRandomComment(response.data);
+    } catch (error) {
+      console.error('Error fetching random comment:', error);
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,11 +58,11 @@ const BlogDetails = () => {
         comment: comment
       };
 
-      const response = await axios.post('http://127.0.0.1:5555/comments', formData)
+      const response = await axios.post('http://127.0.0.1:5555/comments', formData);
 
       toast.success(response.data.message, {
         position: toast.POSITION.TOP_CENTER,
-      })
+      });
 
       setName('');
       setEmail('');
@@ -57,11 +70,9 @@ const BlogDetails = () => {
     } catch (error) {
       toast.error('Failed to post comment', {
         position: toast.POSITION.TOP_CENTER
-      })
+      });
     }
-  }
-
-
+  };
 
   return (
     <Helmet title={blog.title}>
@@ -95,49 +106,71 @@ const BlogDetails = () => {
               </div>
 
               <div className="comment__list mt-5">
-                <h4 className="mb-5">{comments.length} Comment(s)</h4>
+                <h4 className="mb-5">{showAllComments ? comments.length : 1} Comment(s)</h4>
 
-                {comments.map((comment) => (
+                {/* Show only one comment initially */}
+                {!showAllComments && randomComment && (
+                  <div key={randomComment.id} className="single__comment d-flex gap-3">
+                    <img src={commentImg} alt="" />
+                    <div className="comment__content">
+                      <h6 className="fw-bold">{randomComment.name}</h6>
+                      <p className="section__description">{randomComment.comment}</p>
+                      <p className="section__description mb-0">{randomComment.date}</p>
+                      <span className="replay d-flex align-items-center gap-1">
+                        <i className="ri-reply-line"></i> Reply
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Button to show/hide all comments */}
+                <button className="btn" onClick={() => setShowAllComments(!showAllComments)}>
+                  {showAllComments ? 'Show Less Comments' : 'Show All Comments'}
+                </button>
+
+                {/* Showrest of the comments if the button is clicked */}
+                {showAllComments && comments.map((comment) => (
                   <div key={comment.id} className="single__comment d-flex gap-3">
                     <img src={commentImg} alt="" />
                     <div className="comment__content">
-                      <h6 className=" fw-bold">{comment.name}</h6>
-                      <p className="section__description mb-0">{comment.date}</p>
+                      <h6 className="fw-bold">{comment.name}</h6>
                       <p className="section__description">{comment.comment}</p>
+                      <p className="section__description mb-0">{comment.date}</p>
                       <span className="replay d-flex align-items-center gap-1">
                         <i className="ri-reply-line"></i> Reply
                       </span>
                     </div>
                   </div>
                 ))}
+              </div>
 
-                {/* =============== comment form ============ */}
-                <div className="leave__comment-form mt-5">
-                  <h4>Leave a Comment</h4>
-                  <p className="section__description">Leave a comment below:</p>
 
-                  <Form onSubmit={handleFormSubmit}>
-                    <FormGroup className=" d-flex gap-3">
-                      <Input type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} />
-                      <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </FormGroup>
+              {/* =============== comment form ============ */}
+              <div className="leave__comment-form mt-5">
+                <h4>Leave a Comment</h4>
+                <p className="section__description">Leave a comment below:</p>
 
-                    <FormGroup>
-                      <textarea
-                        rows="5"
-                        className="w-100 py-2 px-3"
-                        placeholder="Comment..."
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        required
-                      ></textarea>
-                    </FormGroup>
+                <Form onSubmit={handleFormSubmit}>
+                  <FormGroup className=" d-flex gap-3">
+                    <Input type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} />
+                    <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </FormGroup>
 
-                    <button className="btn comment__btn mt-3">
-                      Post a Comment
-                    </button>
-                  </Form>
-                </div>
+                  <FormGroup>
+                    <textarea
+                      rows="5"
+                      className="w-100 py-2 px-3"
+                      placeholder="Comment..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      required
+                    ></textarea>
+                  </FormGroup>
+
+                  <button className="btn comment__btn mt-3">
+                    Post a Comment
+                  </button>
+                </Form>
               </div>
             </Col>
 
@@ -160,7 +193,6 @@ const BlogDetails = () => {
         </Container>
       </section>
       <ToastContainer />
-
     </Helmet>
   );
 };
