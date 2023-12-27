@@ -121,23 +121,35 @@ def add_comment():
     data = request.get_json()
     new_comment = Comment(
         name=data['name'], email=data['email'], comment=data['comment'])
+    # if 'blogId' in data:
+    #     new_comment.blog_id = data['blogId']
     db.session.add(new_comment)
     db.session.commit()
     return jsonify({'message': 'Comment added successfully'}), 201
 
 
 @app.route('/comments', methods=['GET'])
-def get_comments():
+def get_all_comments():
     comments = Comment.query.all()
+
     comment_list = []
     for comment in comments:
-        comment_list.append({
+        comment_dict = {
+            'id': comment.id,
             'name': comment.name,
             'email': comment.email,
-            'comment': comment.comment
-        })
-    return jsonify({'comments': comment_list})
+            'comment': comment.comment,
+        }
 
+        # Check if the date is not None before formatting
+        if comment.date is not None:
+            comment_dict['date'] = comment.date.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            comment_dict['date'] = None
+
+        comment_list.append(comment_dict)
+
+    return jsonify(comment_list)
 
 @app.route('/bookings', methods=['POST'])
 def add_booking():

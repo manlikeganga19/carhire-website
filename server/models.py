@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime as dt
 db = SQLAlchemy()
 
 
@@ -42,6 +42,8 @@ class Comment(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     comment = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=dt.utcnow)
+
 
 class Booking(db.Model):
     __tablename__ = 'bookings'

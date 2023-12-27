@@ -16,12 +16,25 @@ const BlogDetails = () => {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchComments();
+
   }, [blog]);
 
+  const fetchComments = async () => {
+    try {
+      // Make a request to get comments for the specific blog post
+      const response = await axios.get('http://127.0.0.1:5555/comments');
+      // Update the comments state with the fetched comments
+      setComments(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,22 +95,21 @@ const BlogDetails = () => {
               </div>
 
               <div className="comment__list mt-5">
-                <h4 className="mb-5">1 Comment</h4>
+                <h4 className="mb-5">{comments.length} Comment(s)</h4>
 
-                <div className="single__comment d-flex gap-3">
-                  <img src={commentImg} alt="" />
-                  <div className="comment__content">
-                    <h6 className=" fw-bold">David Visa</h6>
-                    <p className="section__description mb-0">14 July, 2023</p>
-                    <p className="section__description">
-                      Good job, very helpful article
-                    </p>
-
-                    <span className="replay d-flex align-items-center gap-1">
-                      <i className="ri-reply-line"></i> Reply
-                    </span>
+                {comments.map((comment) => (
+                  <div key={comment.id} className="single__comment d-flex gap-3">
+                    <img src={commentImg} alt="" />
+                    <div className="comment__content">
+                      <h6 className=" fw-bold">{comment.name}</h6>
+                      <p className="section__description mb-0">{comment.date}</p>
+                      <p className="section__description">{comment.comment}</p>
+                      <span className="replay d-flex align-items-center gap-1">
+                        <i className="ri-reply-line"></i> Reply
+                      </span>
+                    </div>
                   </div>
-                </div>
+                ))}
 
                 {/* =============== comment form ============ */}
                 <div className="leave__comment-form mt-5">
