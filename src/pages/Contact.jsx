@@ -1,10 +1,11 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Form, FormGroup, Input } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/CommonSection";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios';
 
 import "../styles/contact.css";
 
@@ -33,20 +34,32 @@ const Contact = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
-   const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // My logic to handle the form submission, e.g., sending data to the server
+    try {
+      const formData = {
+        name: name,
+        email: email,
+        message: message,
+      };
 
-    // Displaying a success toast
-    toast.success("Contact information sent successfully!", {
-      position: toast.POSITION.TOP_CENTER
-    });
-    
-    // clearing the form after the contact informaton is sent
-    setName('');
-    setEmail('');
-    setMessage('');
+      const response = await axios.post('http://127.0.0.1:5555/contact', formData);
+
+      toast.success(response.data.message, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+
+      // Clear the form after the contact information is sent
+      setName('');
+      setEmail('');
+      setMessage('');
+      
+    } catch (error) {
+      toast.error('Failed to send contact information', {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
   };
   return (
     <Helmet title="Contact">
@@ -60,11 +73,11 @@ const Contact = () => {
               <Form onSubmit={handleFormSubmit}>
                 <FormGroup className="contact__form">
                   <Input placeholder="Your Name" type="text" value={name}
-                    onChange={(e) => setName(e.target.value)}/>
+                    onChange={(e) => setName(e.target.value)} />
                 </FormGroup>
                 <FormGroup className="contact__form">
                   <Input placeholder="Email" type="email" value={email}
-                    onChange={(e) => setEmail(e.target.value)}/>
+                    onChange={(e) => setEmail(e.target.value)} />
                 </FormGroup>
                 <FormGroup className="contact__form">
                   <textarea
@@ -116,7 +129,7 @@ const Contact = () => {
           </Row>
         </Container>
       </section>
-      <ToastContainer/>
+      <ToastContainer />
     </Helmet>
   );
 };
