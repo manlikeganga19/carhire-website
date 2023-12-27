@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, FormGroup, Input } from "reactstrap";
-
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import blogData from "../assets/data/blogData.js";
 import Helmet from "../components/Helmet/Helmet";
 import { Link } from "react-router-dom";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import commentImg from "../assets/all-images/ava-1.jpg";
-import { useAuth } from "../components/Auth/AuthContext.jsx";
 import "../styles/blog-details.css";
+import axios from 'axios'
 
 const BlogDetails = () => {
   const { slug } = useParams();
   const blog = blogData.find((blog) => blog.title === slug);
-  const history = useNavigate();
-  const auth = useAuth();
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [comment, setComment] = useState("");
 
 
@@ -22,29 +22,32 @@ const BlogDetails = () => {
     window.scrollTo(0, 0);
   }, [blog]);
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    if (!auth.isLoggedIn) {
-      // Redirect to the login page if the user is not logged in
-      history.push("/sign-in");
-      return;
+    try {
+      const formData = {
+        name: name,
+        email: email,
+        comment: comment
+      };
+
+      const response = await axios.post('http://127.0.0.1:5555/comments', formData)
+
+      toast.success(response.data.message, {
+        position: toast.POSITION.TOP_CENTER,
+      })
+
+      setName('');
+      setEmail('');
+      setComment('');
+    } catch (error) {
+      toast.error('Failed to post comment', {
+        position: toast.POSITION.TOP_CENTER
+      })
     }
+  }
 
-    // Your logic to handle the comment submission
-    // For demonstration purposes, let's assume you have an API function to post a comment
-    // Replace this with your actual API call or database operation
-    postCommentToServer(comment);
-
-    // Clear the comment field after submission
-    setComment("");
-  };
-
-  const postCommentToServer = (comment) => {
-    // Your logic to post the comment to the server
-    console.log("Comment posted:", comment);
-    // Here, you can make an API call or perform any action to save the comment
-  };
 
 
   return (
@@ -99,18 +102,12 @@ const BlogDetails = () => {
                 {/* =============== comment form ============ */}
                 <div className="leave__comment-form mt-5">
                   <h4>Leave a Comment</h4>
-                  <p className="section__description">
-                    {auth.isLoggedIn
-                      ? "Leave a comment below:"
-                      : "You must sign in to make or comment a post"}
-                  </p>
+                  <p className="section__description">Leave a comment below:</p>
 
                   <Form onSubmit={handleFormSubmit}>
                     <FormGroup className=" d-flex gap-3">
-                      <Input type="text" placeholder="Full name" value={auth.isLoggedIn ? auth.user.fullName : ""}
-                        readOnly={auth.isLoggedIn} />
-                      <Input type="email" placeholder="Email" value={auth.isLoggedIn ? auth.user.email : ""}
-                        readOnly={auth.isLoggedIn} />
+                      <Input type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} />
+                      <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </FormGroup>
 
                     <FormGroup>
@@ -150,6 +147,8 @@ const BlogDetails = () => {
           </Row>
         </Container>
       </section>
+      <ToastContainer />
+
     </Helmet>
   );
 };
