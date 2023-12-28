@@ -39,10 +39,10 @@ const BlogDetails = () => {
 
   const fetchRandomComment = async () => {
     try {
-      // Make a request to get a random comment
-      const response = await axios.get('http://127.0.0.1:5555/random-comment');
-      // Update the randomComment state with the fetched comment
-      setRandomComment(response.data);
+      const response = await axios.get('http://127.0.0.1:5555/comments');
+      const randomIndex = Math.floor(Math.random() * response.data.length);
+      const randomComment = response.data[randomIndex];
+      setRandomComment(randomComment);
     } catch (error) {
       console.error('Error fetching random comment:', error);
     }
@@ -106,7 +106,7 @@ const BlogDetails = () => {
               </div>
 
               <div className="comment__list mt-5">
-                <h4 className="mb-5">{showAllComments ? comments.length : 1} Comment(s)</h4>
+                <h4 className="mb-4">{comments.length} Comment(s)</h4>
 
                 {/* Show only one comment initially */}
                 {!showAllComments && randomComment && (
@@ -124,12 +124,12 @@ const BlogDetails = () => {
                 )}
 
                 {/* Button to show/hide all comments */}
-                <button className="btn" onClick={() => setShowAllComments(!showAllComments)}>
+                <button className="btn comment__btn mt-3 mb-3" onClick={() => setShowAllComments(!showAllComments)}>
                   {showAllComments ? 'Show Less Comments' : 'Show All Comments'}
                 </button>
 
-                {/* Showrest of the comments if the button is clicked */}
-                {showAllComments && comments.map((comment) => (
+                {/* Show rest of the comments if the button is clicked or always */}
+                {(showAllComments || !randomComment) && comments.map((comment) => (
                   <div key={comment.id} className="single__comment d-flex gap-3">
                     <img src={commentImg} alt="" />
                     <div className="comment__content">
@@ -143,6 +143,7 @@ const BlogDetails = () => {
                   </div>
                 ))}
               </div>
+
 
 
               {/* =============== comment form ============ */}
