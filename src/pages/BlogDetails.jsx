@@ -145,7 +145,6 @@ const BlogDetails = () => {
               </div>
 
 
-
               {/* =============== comment form ============ */}
               <div className="leave__comment-form mt-5">
                 <h4>Leave a Comment</h4>
