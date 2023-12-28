@@ -178,15 +178,13 @@ def add_booking():
     if persons_to_carry is None or int(persons_to_carry) < 1:
         return jsonify({'error': 'Invalid value for persons_to_carry'}), 400
 
-    # Convert date and time strings to Python date and time objects
+    # Convert date string to Python date object
     date_str = data.get('date')
-    time_str = data.get('time')
     try:
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        time_obj = datetime.strptime(time_str, '%I:%M %p').time()
     except ValueError as e:
-        app.logger.error(f"Error parsing date or time: {e}")
-        return jsonify({'error': f'Invalid date or time format: {e}'}), 400
+        app.logger.error(f"Error parsing date: {e}")
+        return jsonify({'error': f'Invalid date format: {e}'}), 400
 
     new_booking = Booking(
         name=data['name'],
@@ -197,13 +195,13 @@ def add_booking():
         persons_to_carry=persons_to_carry,
         luggage_to_carry=data.get('luggage_to_carry'),
         date=date,
-        time=time_obj,  
+        time=data.get('time'),      
         additional_text=data.get('additional_text')
     )
     db.session.add(new_booking)
     db.session.commit()
-    return jsonify({'message': 'Booking information added successfully'}), 201
 
+    return jsonify({'message': 'Booking information added successfully'}), 201
 
 if __name__ == '__main__':
     app.run(debug=True, port=5555)

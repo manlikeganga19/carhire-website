@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../../styles/booking-form.css";
 import { Form, FormGroup } from "reactstrap";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingForm = () => {
   const [formData, setFormData] = useState({
@@ -17,15 +19,9 @@ const BookingForm = () => {
     additionalText: "",
   });
 
+
   const submitHandler = async (event) => {
     event.preventDefault();
-
-    // Validate the time format before formatting
-    const timeRegex = /^(0?[1-9]|1[0-2]):[0-5]\d\s?(?:[APMapm]{2})$/;
-    if (!timeRegex.test(formData.journeyTime)) {
-      console.error('Invalid time format');
-      return;
-    }
 
     const formDataToSend = new FormData();
     formDataToSend.append("name", `${formData.firstName} ${formData.lastName}`);
@@ -38,17 +34,15 @@ const BookingForm = () => {
 
     // Format date as 'YYYY-MM-DD'
     const formattedDate = new Date(formData.journeyDate).toISOString().split('T')[0];
-
-    // Format the time in 24-hour notation
-    const formattedTime = new Date(`1970-01-01T${formData.journeyTime}`).toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: 'numeric' });
-
-    // Append the formatted date and time to FormData
     formDataToSend.append("date", formattedDate);
-    formDataToSend.append("time", formattedTime);
+
+    // Send the time as a string without further validation or formatting
+    formDataToSend.append("time", formData.journeyTime);
+
     formDataToSend.append("additional_text", formData.additionalText);
 
     try {
-      const response = await fetch("/bookings", {
+      const response = await fetch("http://127.0.0.1:5555/bookings", {
         method: "POST",
         body: formDataToSend,
       });
@@ -57,14 +51,31 @@ const BookingForm = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const result = await response.json();
-      console.log(result);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        fromAddress: "",
+        toAddress: "",
+        personsToCarry: "1 person",
+        luggageToCarry: "1 luggage",
+        journeyDate: "",
+        journeyTime: "",
+        additionalText: "",
+      });
+
+      toast.success('Booking information sent!', {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } catch (error) {
+
+      toast.error('Failed to send booking information', {
+        position: toast.POSITION.TOP_CENTER
+      });
       console.error("Error sending form data:", error);
     }
   };
-
-
 
 
 
@@ -72,6 +83,7 @@ const BookingForm = () => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+
 
   return (
     <Form onSubmit={submitHandler}>
@@ -194,6 +206,7 @@ const BookingForm = () => {
       </FormGroup>
 
       <button className="booking_btn" type="submit">Submit</button>
+      <ToastContainer />
     </Form>
   );
 };

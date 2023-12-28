@@ -57,5 +57,5 @@ class Booking(db.Model):
     persons_to_carry = db.Column(db.Integer, nullable=False)
     luggage_to_carry = db.Column(db.Integer, nullable=True)
     date = db.Column(db.Date, nullable=False)
-    time = db.Column(db.Time, nullable=False)
+    time = db.Column(db.String(20), nullable=True)
     additional_text = db.Column(db.Text, nullable=True)
