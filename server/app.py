@@ -18,7 +18,6 @@ Session(app)
 
 db.init_app(app)
 
-# Registration route
 
 
 @app.route('/register', methods=['POST'])
@@ -30,15 +29,12 @@ def register():
     email = data.get('email')
     password = data.get('password')
 
-    # Check if the username or email already exists
     if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
         return jsonify({'message': 'Username or email already exists'}), 400
 
-    # Create a new user
     new_user = User(name=name, username=username, email=email)
     new_user.set_password(password)
 
-    # Add the user to the database
     db.session.add(new_user)
     db.session.commit()
 
@@ -65,10 +61,8 @@ def login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    # Remove the user from the session
     session.pop('username', None)
 
-    # Create a response and add CORS headers
     response = jsonify({'message': 'Logout successful'})
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     response.headers.add('Access-Control-Allow-Origin',
@@ -103,7 +97,6 @@ def add_contact():
     db.session.commit()
     return jsonify({'message': 'Contact added successfully'}), 201
 
-# Routes for Newsletter Model
 
 
 @app.route('/newsletter', methods=['POST'])
@@ -114,7 +107,6 @@ def add_newsletter():
     db.session.commit()
     return jsonify({'message': 'Email added to newsletter successfully'}), 201
 
-# Routes for Comment Model
 
 
 @app.route('/comments', methods=['POST'])
@@ -142,7 +134,6 @@ def get_all_comments():
             'comment': comment.comment,
         }
 
-        # Check if the date is not None before formatting
         if comment.date is not None:
             comment_dict['date'] = comment.date.strftime('%Y-%m-%d %H:%M:%S')
         else:
@@ -154,7 +145,6 @@ def get_all_comments():
 
 
 def get_any_comment():
-    # Fetch any comment (randomly)
     any_comment = Comment.query.order_by(func.random()).first()
 
     if any_comment:
@@ -178,7 +168,6 @@ def add_booking():
     if persons_to_carry is None or int(persons_to_carry) < 1:
         return jsonify({'error': 'Invalid value for persons_to_carry'}), 400
 
-    # Convert date string to Python date object
     date_str = data.get('date')
     try:
         date = datetime.strptime(date_str, '%Y-%m-%d').date()

@@ -44,13 +44,32 @@ const Footer = () => {
     position: toast.POSITION.TOP_CENTER
   });
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (emailRegex.test(email)) {
-      notifySuccess();
-    } else {
+    if (!emailRegex.test(email)) {
       notifyError();
+      return;
+    }
+
+    try {
+      const response = await fetch("http://127.0.0.1:5555/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      notifySuccess();
+      setEmail(''); 
+    } catch (error) {
+      notifyError();
+      console.error("Error sending newsletter email:", error);
     }
   };
 
