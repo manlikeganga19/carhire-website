@@ -12,8 +12,8 @@ const BookingForm = () => {
     phoneNumber: "",
     fromAddress: "",
     toAddress: "",
-    personsToCarry: "1 person", // Default value
-    luggageToCarry: "1 luggage", // Default value
+    personsToCarry: "1 person", 
+    luggageToCarry: "1 luggage", 
     journeyDate: "",
     journeyTime: "",
     additionalText: "",
@@ -21,7 +21,7 @@ const BookingForm = () => {
 
 
   const submitHandler = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
 
     const formDataToSend = new FormData();
     formDataToSend.append("name", `${formData.firstName} ${formData.lastName}`);
