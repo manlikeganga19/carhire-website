@@ -26,6 +26,13 @@ const BlogDetails = () => {
     fetchRandomComment();
   }, [blog]);
 
+  useEffect(() => {
+    // Add this useEffect to fetch comments again after a new comment is posted
+    if (comments.length > 0) {
+      fetchComments();
+    }
+  }, [comments]);
+  
   const fetchComments = async () => {
     try {
       // Make a request to get comments for the specific blog post
