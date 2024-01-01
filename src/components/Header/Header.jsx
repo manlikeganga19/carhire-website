@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Container, Row, Col } from "reactstrap";
 import { Link, NavLink } from "react-router-dom";
 import "../../styles/header.css";
+import { useAuth } from "../Auth/AuthContext"; 
 
 const navLinks = [
   {
@@ -32,16 +33,13 @@ const navLinks = [
 
 const Header = () => {
   const menuRef = useRef(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("John Doe"); // Replace with your actual default username
+  ; // Replace with your actual default username
+  const { user, logout } = useAuth(); // Access user and logout from AuthContext
 
   const toggleMenu = () => menuRef.current.classList.toggle("menu__active");
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    setIsLoggedIn(false);
-    setUsername("");
-  };
+
+
 
   return (
     <header className="header">
@@ -60,10 +58,10 @@ const Header = () => {
 
             <Col lg="6" md="6" sm="6">
               <div className="header__top__right d-flex align-items-center justify-content-end gap-3">
-                {isLoggedIn ? (
+                {user ? (
                   <>
-                    <div>Hello {username}</div>
-                    <button onClick={handleLogout}>Logout</button>
+                    <div>Hello {user}</div>
+                    <button onClick={logout}>Logout</button>
                   </>
                 ) : (
                   <>
@@ -80,7 +78,6 @@ const Header = () => {
           </Row>
         </Container>
       </div>
-
       {/* =============== header middle =========== */}
       <div className="header__middle">
         <Container>

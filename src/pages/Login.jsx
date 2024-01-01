@@ -34,7 +34,7 @@ const Login = () => {
 
       try {
         const data = JSON.parse(responseBody);
-
+        
         // Check if the JSON structure is as expected
         if (data && data.message === 'Login successful') {
           toast.success('Login successful');

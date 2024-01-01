@@ -14,7 +14,7 @@ const PaymentMethod = () => {
     <>
       <div className="payment">
         <label htmlFor="" className="d-flex align-items-center gap-2">
-          <input
+            <input
             type="radio"
             checked={selectedOption === "bankTransfer"}
             onChange={() => handleRadioChange("bankTransfer")}
